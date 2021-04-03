@@ -25,15 +25,21 @@
 #include "Eprom.h"
 #include "Event.h"
 
-#define bluetooth 9600              //jika hc 06 atau hc05 ganti dengan 38400
-#define namaBluetooth "Jws DacxtroniC"
+#define bluetooth 9600 //jika hc 06 atau hc05 ganti dengan 38400
+#define namaBluetooth "Jws AL-MUTTAQIN"
 #define jumat 5
 
-#define led_iqomah  2 //iqomah
-#define buzer  A3 //buzer
-#define strobePin  A2 //Pin connected to Strobe (pin 1) of 4094
-#define dataPin  A1 //Pin connected to Data (pin 2) of 4094
-#define clockPin  A0  //Pin connected to Clock (pin 3) of 4094
+#define led_iqomah 8 //iqomah
+#define buzer A0     //buzer
+#define strobePin A3 //Pin connected to Strobe (pin 1) of 4094
+#define dataPin A2   //Pin connected to Data (pin 2) of 4094
+#define clockPin A1  //Pin connected to Clock (pin 3) of 4094
+
+// #define led_iqomah 2 //iqomah
+// #define buzer A3     //buzer
+// #define strobePin A2 //Pin connected to Strobe (pin 1) of 4094
+// #define dataPin A1   //Pin connected to Data (pin 2) of 4094
+// #define clockPin A0  //Pin connected to Clock (pin 3) of 4094
 
 Rtc waktu = Rtc();
 Jadwal MyJadwal = Jadwal();
@@ -41,151 +47,178 @@ Bluetooth HC05 = Bluetooth();
 Alamat alamat = Alamat();
 Eprom eprom = Eprom();
 Event second = Event(1000);
-Segmen segmen = Segmen(dataPin,clockPin,strobePin );
+Segmen segmen = Segmen(dataPin, clockPin, strobePin);
 
-void setup() {
+void setup()
+{
   Serial.begin(bluetooth);
   Serial.setTimeout(200);
   // waktu.setTime(10,58,53);
   // waktu.setTanggal(31,6,2020);
   // segmen.setTime(17,39);
-  pinMode(buzer,OUTPUT);
-  pinMode(led_iqomah,OUTPUT);
-  digitalWrite(buzer,HIGH);
-  digitalWrite(led_iqomah,LOW);
+  pinMode(buzer, OUTPUT);
+  pinMode(led_iqomah, OUTPUT);
+  digitalWrite(buzer, HIGH);
+  digitalWrite(led_iqomah, LOW);
   delay(100);
-  digitalWrite(buzer,LOW);
+  digitalWrite(buzer, LOW);
+  // Serial.println("hapus");
+  // for (int i = 0; i < 200; i++)
+  // {
+  //   EEPROM.write(i, 0);
+  // }
+  // Serial.println("hapus Finish");
+  
 }
 
-void loop() {
+void loop()
+{
   // ambil waktu dari rtc
-  uint8_t dtk,jam,menit,tgl,bln,hri;
-  uint8_t jadwaljam , jadwalmenit;
+  uint8_t dtk, jam, menit, tgl, bln, hri;
+  uint8_t jadwaljam, jadwalmenit;
   int th;
-  waktu.getTime(jam,menit,dtk);
-  waktu.getTanggal(hri,tgl,bln,th);
-  segmen.setTime(jam,menit);
-  segmen.setTanggal(tgl,bln,2020);
+  waktu.getTime(jam, menit, dtk);
+  waktu.getTanggal(hri, tgl, bln, th);
+  segmen.setTime(jam, menit);
+  segmen.setTanggal(tgl, bln, 2020);
   // ambil jadwal
 
-  MyJadwal.setTanggal(tgl,bln,th);
+  MyJadwal.setTanggal(tgl, bln, th);
 
-  MyJadwal.getImsya(jadwaljam ,jadwalmenit);
-  segmen.setImsya(jadwaljam ,jadwalmenit);
+  MyJadwal.getImsya(jadwaljam, jadwalmenit);
+  segmen.setImsya(jadwaljam, jadwalmenit);
 
-  MyJadwal.getSubuh(jadwaljam ,jadwalmenit);
-  segmen.setSubuh(jadwaljam ,jadwalmenit);
+  MyJadwal.getSubuh(jadwaljam, jadwalmenit);
+  segmen.setSubuh(jadwaljam, jadwalmenit);
 
-  MyJadwal.getDzuhur(jadwaljam ,jadwalmenit);
-  segmen.setDzuhur(jadwaljam ,jadwalmenit);
+  MyJadwal.getDzuhur(jadwaljam, jadwalmenit);
+  segmen.setDzuhur(jadwaljam, jadwalmenit);
 
-  MyJadwal.getAshar(jadwaljam ,jadwalmenit);
-  segmen.setAshar(jadwaljam ,jadwalmenit);
+  MyJadwal.getAshar(jadwaljam, jadwalmenit);
+  segmen.setAshar(jadwaljam, jadwalmenit);
 
-  MyJadwal.getMaghrib(jadwaljam ,jadwalmenit);
-  segmen.setMaghrib(jadwaljam ,jadwalmenit);
+  MyJadwal.getMaghrib(jadwaljam, jadwalmenit);
+  segmen.setMaghrib(jadwaljam, jadwalmenit);
 
-  MyJadwal.getIsya(jadwaljam ,jadwalmenit);
-  segmen.setIsya(jadwaljam ,jadwalmenit);
+  MyJadwal.getIsya(jadwaljam, jadwalmenit);
+  segmen.setIsya(jadwaljam, jadwalmenit);
   // cek alarm
-  MyJadwal.setJam(jam,menit);
+  MyJadwal.setJam(jam, menit);
 
-  if (MyJadwal.getAlarm() != alamat.ALARM_OFF){
-    uint8_t count;//
-    uint16_t adzan  ;
-    uint16_t sholat  ;
-    if (MyJadwal.getAlarm() == alamat.ALARM_SUBUH){
+  if (MyJadwal.getAlarm() != alamat.ALARM_OFF)
+  {
+    uint8_t count; //
+    uint16_t adzan;
+    uint16_t sholat;
+    if (MyJadwal.getAlarm() == alamat.ALARM_SUBUH)
+    {
       segmen.displaySubuh();
-      count = eprom.readByte(0x50,alamat.IQOMAH_SUBUH);
-      adzan = 60 * eprom.readByte(0x50,alamat.ADZAN_SUBUH) ;
-      sholat = 60 * eprom.readByte(0x50,alamat.SHOLAT_SUBUH) ;
-    }    
-    if (MyJadwal.getAlarm() == alamat.ALARM_DZUHUR){
+      count = eprom.readByte(0x50, alamat.IQOMAH_SUBUH);
+      adzan = 60 * eprom.readByte(0x50, alamat.ADZAN_SUBUH);
+      sholat = 60 * eprom.readByte(0x50, alamat.SHOLAT_SUBUH);
+    }
+    if (MyJadwal.getAlarm() == alamat.ALARM_DZUHUR)
+    {
       segmen.displayDzuhur();
-      if (hri == jumat ){
-        count = eprom.readByte(0x50,alamat.IQOMAH_JUMAT);
-        adzan = 60 * eprom.readByte(0x50,alamat.ADZAN_JUMAT) ;
-        sholat = 60 * eprom.readByte(0x50,alamat.SHOLAT_JUMAT) ;
+      if (hri == jumat)
+      {
+        count = eprom.readByte(0x50, alamat.IQOMAH_JUMAT);
+        adzan = 60 * eprom.readByte(0x50, alamat.ADZAN_JUMAT);
+        sholat = 60 * eprom.readByte(0x50, alamat.SHOLAT_JUMAT);
       }
-      else{
-        count = eprom.readByte(0x50,alamat.IQOMAH_DZUHUR);
-        adzan = 60 * eprom.readByte(0x50,alamat.ADZAN_DZUHUR) ;
-        sholat = 60 * eprom.readByte(0x50,alamat.SHOLAT_DZUHUR) ;
+      else
+      {
+        count = eprom.readByte(0x50, alamat.IQOMAH_DZUHUR);
+        adzan = 60 * eprom.readByte(0x50, alamat.ADZAN_DZUHUR);
+        sholat = 60 * eprom.readByte(0x50, alamat.SHOLAT_DZUHUR);
       }
     }
-    if (MyJadwal.getAlarm() == alamat.ALARM_ASHAR){
+    if (MyJadwal.getAlarm() == alamat.ALARM_ASHAR)
+    {
       segmen.displayAshar();
-      count = eprom.readByte(0x50,alamat.IQOMAH_ASHAR);
-      adzan = 60 * eprom.readByte(0x50,alamat.ADZAN_ASHAR) ;
-      sholat = 60 * eprom.readByte(0x50,alamat.SHOLAT_ASHAR) ;
+      count = eprom.readByte(0x50, alamat.IQOMAH_ASHAR);
+      adzan = 60 * eprom.readByte(0x50, alamat.ADZAN_ASHAR);
+      sholat = 60 * eprom.readByte(0x50, alamat.SHOLAT_ASHAR);
     }
-    if (MyJadwal.getAlarm() == alamat.ALARM_MAGHRIB){
+    if (MyJadwal.getAlarm() == alamat.ALARM_MAGHRIB)
+    {
       segmen.displayMaghrib();
-      count = eprom.readByte(0x50,alamat.IQOMAH_MAGHRIB);
-      adzan = 60 * eprom.readByte(0x50,alamat.ADZAN_MAGHRIB) ;
-      sholat = 60 * eprom.readByte(0x50,alamat.SHOLAT_MAGHRIB) ;
+      count = eprom.readByte(0x50, alamat.IQOMAH_MAGHRIB);
+      adzan = 60 * eprom.readByte(0x50, alamat.ADZAN_MAGHRIB);
+      sholat = 60 * eprom.readByte(0x50, alamat.SHOLAT_MAGHRIB);
     }
-    if (MyJadwal.getAlarm() == alamat.ALARM_ISYA){
+    if (MyJadwal.getAlarm() == alamat.ALARM_ISYA)
+    {
       segmen.displayIsya();
-      count = eprom.readByte(0x50,alamat.IQOMAH_ISYA);
-      adzan = 60 * eprom.readByte(0x50,alamat.ADZAN_ISYA);
-      sholat = 60 * eprom.readByte(0x50,alamat.SHOLAT_ISYA) ;
+      count = eprom.readByte(0x50, alamat.IQOMAH_ISYA);
+      adzan = 60 * eprom.readByte(0x50, alamat.ADZAN_ISYA);
+      sholat = 60 * eprom.readByte(0x50, alamat.SHOLAT_ISYA);
     }
 
     // beep alarm
-    for (uint8_t i = 0; i < 5 ; i++){
-      digitalWrite(buzer,HIGH);
+    for (uint8_t i = 0; i < 5; i++)
+    {
+      digitalWrite(buzer, HIGH);
       delay(500);
-      digitalWrite(buzer,LOW);
+      digitalWrite(buzer, LOW);
       delay(500);
       HC05.loop();
-    }    
+    }
     //waktu tunggu adzan
-    while (adzan>0) {
-      if (second.getEvent()){
-        waktu.getTime(jam,menit,dtk);
-        segmen.setTime(jam,menit);
+    while (adzan > 0)
+    {
+      if (second.getEvent())
+      {
+        waktu.getTime(jam, menit, dtk);
+        segmen.setTime(jam, menit);
         adzan--;
       }
       HC05.loop();
     }
-    digitalWrite(buzer,HIGH);
-    delay(500);
-    digitalWrite(buzer,LOW);
+    digitalWrite(buzer, HIGH);
+    delay(200);
+    digitalWrite(buzer, LOW);
     //counting down iqomah
     int countdown = count * 60;
-    while (countdown >= 0){
-      uint8_t i = countdown/60;
-      uint8_t j = countdown%60;
-      segmen.setTime(i,j);
-      if (second.getEvent()){
-        if ((countdown % 2) == 0){
-          digitalWrite(led_iqomah,HIGH);
+    while (countdown >= 0)
+    {
+      uint8_t i = countdown / 60;
+      uint8_t j = countdown % 60;
+      segmen.setTime(i, j);
+      if (second.getEvent())
+      {
+        if ((countdown % 2) == 0)
+        {
+          digitalWrite(led_iqomah, HIGH);
         }
-        else{
-          digitalWrite(led_iqomah,LOW);
+        else
+        {
+          digitalWrite(led_iqomah, LOW);
         }
         countdown--;
       }
       HC05.loop();
     }
     // beep alarm
-    for (uint8_t i = 0; i < 3 ; i++){
-      digitalWrite(buzer,LOW);
+    for (uint8_t i = 0; i < 3; i++)
+    {
+      digitalWrite(buzer, LOW);
       delay(500);
-      digitalWrite(buzer,HIGH);
+      digitalWrite(buzer, HIGH);
       delay(500);
     }
-    digitalWrite(buzer,HIGH);
+    digitalWrite(buzer, HIGH);
     delay(1000);
-    digitalWrite(buzer,LOW);
-    digitalWrite(led_iqomah,LOW);
+    digitalWrite(buzer, LOW);
+    digitalWrite(led_iqomah, LOW);
     //waktu tunggu SHOLAT
-    while (sholat>0){
-      if (second.getEvent()){
+    while (sholat > 0)
+    {
+      if (second.getEvent())
+      {
         sholat--;
-        waktu.getTime(jam,menit,dtk);
-        segmen.setTime(jam,menit);
+        waktu.getTime(jam, menit, dtk);
+        segmen.setTime(jam, menit);
         segmen.displayOff();
       }
       HC05.loop();
@@ -193,10 +226,12 @@ void loop() {
   }
   HC05.loop();
   segmen.loop();
-  if (jam>=22 || jam <= 2)  {
+  if (jam >= 22 || jam <= 2)
+  {
     segmen.displayOff();
   }
-  else  {
+  else
+  {
     segmen.displayNormal();
   }
 }

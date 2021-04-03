@@ -91,8 +91,8 @@ void Jadwal::lookupJadwal(unsigned char tanggal, unsigned char bulan, int tahun)
 #endif // rumus
 #if defined(rumus)
 
-    float lt = 110.8;      //pgm_read_float(lintang + daerah);
-    float bj = -7.7;       //pgm_read_float(bujur + daerah);
+    float bj = 110.33;      //pgm_read_float(lintang + daerah);
+    float lt = -7.80;       //pgm_read_float(bujur + daerah);
     unsigned char wkt = 7; // pgm_read_byte_near(gmt + daerah);
     int hours, minutes;
     //   if (daerah == 0)
@@ -106,8 +106,7 @@ void Jadwal::lookupJadwal(unsigned char tanggal, unsigned char bulan, int tahun)
     jadwal[2] = hours;
     jadwal[3] = minutes;
     // get_float_time_parts(times[1], hours, minutes);
-    calc = (jadwal[2] * 60) + jadwal[3] - 8;
-
+    calc = (jadwal[2] * 60) + jadwal[3] - 8; //imsyak = subuh - 10 menit (+2 toleransi)
     jadwal[0] = calc / 60;
     jadwal[1] = calc % 60;
 
