@@ -328,9 +328,9 @@ void Bluetooth::loop()
       }
       if (command == command_end)
       {
-        digitalWrite(A3, HIGH);
-        delay(300);
-        digitalWrite(A3, LOW);
+        digitalWrite(A0, HIGH);
+        delay(200);
+        digitalWrite(A0, LOW);
         /* code */
       }
     }

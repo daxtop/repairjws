@@ -26,7 +26,7 @@
 #include "Event.h"
 
 #define bluetooth 9600 //jika hc 06 atau hc05 ganti dengan 38400
-#define namaBluetooth "Jws AL-MUTTAQIN"
+#define namaBluetooth "JAM AL-MUTTAQIIN"
 #define jumat 5
 
 #define led_iqomah 8 //iqomah
@@ -62,13 +62,14 @@ void setup()
   digitalWrite(led_iqomah, LOW);
   delay(100);
   digitalWrite(buzer, LOW);
+  Serial.print("AT+NAME");
+  Serial.println(namaBluetooth);
   // Serial.println("hapus");
-  // for (int i = 0; i < 200; i++)
+  // for (int i = 0; i < 1000; i++)
   // {
   //   EEPROM.write(i, 0);
   // }
   // Serial.println("hapus Finish");
-  
 }
 
 void loop()
@@ -80,7 +81,7 @@ void loop()
   waktu.getTime(jam, menit, dtk);
   waktu.getTanggal(hri, tgl, bln, th);
   segmen.setTime(jam, menit);
-  segmen.setTanggal(tgl, bln, 2020);
+  segmen.setTanggal(tgl, bln, th);
   // ambil jadwal
 
   MyJadwal.setTanggal(tgl, bln, th);
