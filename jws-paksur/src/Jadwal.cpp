@@ -226,7 +226,7 @@ void Jadwal::setJam(unsigned char jam, unsigned char menit)
     alarm_status = alamat.ALARM_OFF;
     if (jam == jadwal[0] && menit == jadwal[1])
     {
-        alarm_status = alamat.ALARM_IMSYA;
+        // alarm_status = alamat.ALARM_IMSYA;
     }
     if (jam == jadwal[2] && menit == jadwal[3])
     {

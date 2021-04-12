@@ -111,6 +111,7 @@ void loop()
     uint8_t count; //
     uint16_t adzan;
     uint16_t sholat;
+    
     if (MyJadwal.getAlarm() == alamat.ALARM_SUBUH)
     {
       segmen.displaySubuh();
